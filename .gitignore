@@ -1,0 +1,49 @@
+# Python
+*.pyc
+__pycache__/
+
+# DB
+*.sqlite3
+*.sqlite3-journal
+*.log
+db.sqlite3
+
+# Environment & Secrets
+.env
+.env.*
+*.pem
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Virtual Environment
+venv/
+
+# Static and Media Files
+static/
+media/
+
+# Editor Config
+.vscode/
+.idea/
+
+# Migrations (optional)
+*/migrations/*.py
+*/migrations/__pycache__/
+!*/migrations/__init__.py
+
+# Build Files
+*.egg-info/
+dist/
+build/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+
+# Local/Custom Settings
+local_settings.py
