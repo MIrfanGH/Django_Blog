@@ -1,0 +1,76 @@
+
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+    <head>
+
+        <!-- Required meta tags for proper rendering and touch zooming -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        
+        <!-- Bootstrap 5 CSS via CDN -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" 
+                    integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+        
+        <!-- Custom CSS file loaded from the static directory for custom styles -->
+        <link rel="stylesheet" type="text/css" href="{% static 'blog/mycss.css' %}">
+
+        <!-- Dynamic page title: Uses block variable 'title' if available -->
+        {% if title %}
+            <title>Django Blog - {{title}}</title>
+        {% else %}
+            <title>Django Blog</title>
+        {% endif %}
+    </head>
+
+    <body>
+
+     <!-- Navbar include -->
+    {% include 'blog/navbar.html' %}
+
+    <!-- Main content container -->
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+
+            <!-- Display Django messages (alerts) dynamically -->
+            {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}"> 
+                {{ message }}
+              </div>
+              {% endfor %}
+            {% endif %}
+            
+            <!-- Content block that child templates will override -->
+            {% block content %}       
+            
+            {% endblock %}            
+        </div>
+        
+        <!-- Right column: sidebar -->
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3>Sidebar</h3>
+            <div class='text-muted'>
+              <p>Need to work on this (part of basic structure of the application)</p>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light">Latest Posts</li>
+                <li class="list-group-item list-group-item-light">Announcements</li>
+                <li class="list-group-item list-group-item-light">etc</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+     <!--  JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
+    </body>
+
+</html>
