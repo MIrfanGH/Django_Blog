@@ -163,5 +163,13 @@ LOGIN_REDIRECT_URL = 'blog_home'
 LOGIN_URL = "login"  
 
 
+""" >>>>>>>>>>>>>>>>>> Django App----------Settings for enabling Email functioanlity <<<<<<<<<<<<<<<<<<<<<<<"""
+# App Password for this application-----> ppsa uxhj flxn xcjh
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('USER_EMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('USER_EMAIL_PASSWORD')
 
