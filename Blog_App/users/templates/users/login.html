@@ -12,17 +12,23 @@
     <form method='POST'>
         {% csrf_token %}
         <fieldset class="form-group">  
-            <legend class="border-bottom mb-4">Log In</legend>
+            <legend class="border-bottom mb-4 ">Log In</legend>
               {{form|crispy }} {# Renders form fields with  crispy formatting with Bootstrap styling #}
         </fieldset>
 
         <!-- Login button aligned to center -->
         <div class="col-md-6 offset-md-3 ">
             <div class="form-group text-center">
-                  <button class="btn btn-outline-info" type="submit">Login</button>                    
+                <button class="btn btn-outline-info" type="submit">Login</button>                    
             </div>
-        </div>  
+        </div>
     </form> 
+
+    <div class=" col-md-6 offset-md-3 text-center">
+        <small class="text-muted">
+            <a class="ml-2" href="{% url 'password_reset' %}">Forgot password?</a>
+        </small> 
+    </div> 
 
     <!-- Link to Registration Page -->
     <div class=" col-md-6 offset-md-3 text-center">
