@@ -20,8 +20,8 @@ class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'  # Template to render 'blog/post_list.html
     context_object_name = 'posts'     # Custom template used default is 'object_list'
+    paginate_by = 4
     ordering = ['-date_posted']       # Newest posts first ('-' indicates descending order by date)
-  
 
 
 class SameUserPostListView(ListView):
@@ -29,6 +29,7 @@ class SameUserPostListView(ListView):
     model = Post
     template_name = 'blog/same_user_posts.html' 
     context_object_name = 'SamePosts' 
+    paginate_by = 4
       
     def get_queryset(self):
         # Fetch user object using username from URL 
