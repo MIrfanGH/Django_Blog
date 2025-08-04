@@ -163,8 +163,7 @@ LOGIN_REDIRECT_URL = 'blog_home'
 LOGIN_URL = "login"  
 
 
-""" >>>>>>>>>>>>>>>>>> Django App----------Settings for enabling Email functioanlity <<<<<<<<<<<<<<<<<<<<<<<"""
-# App Password for this application-----> ppsa uxhj flxn xcjh
+""" >>>>>>>>>>>>>>>>>> Email reset functioanlity <<<<<<<<<<<<<<<<<<<<<<<"""
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
