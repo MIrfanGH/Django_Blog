@@ -29,7 +29,7 @@ DEBUG = True
 # Hosts/domain names the app can serve; required for security and header validation
 ALLOWED_HOSTS = ['127.0.0.1',
                  'localhost',
-                 ".herokuapp.com",
+                 "https://mydailyblog-de8f0c5ea03b.herokuapp.com/",
                  ]
 
 
