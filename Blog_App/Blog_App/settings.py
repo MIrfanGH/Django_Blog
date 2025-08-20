@@ -22,14 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: Set to False in production
-# DEBUG = os.environ.get("DEBUG")
-DEBUG = True
+DEBUG = os.environ.get("DEBUG")
+
 
 
 # Hosts/domain names the app can serve; required for security and header validation
-ALLOWED_HOSTS = ['127.0.0.1',
-                 'localhost',
-                 "https://mydailyblog-de8f0c5ea03b.herokuapp.com/",
+ALLOWED_HOSTS = ['127.0.0.1' ,
+                 'mydailyblog-de8f0c5ea03b.herokuapp.com'
                  ]
 
 
