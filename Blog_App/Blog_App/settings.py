@@ -37,14 +37,13 @@ ALLOWED_HOSTS = ['127.0.0.1' ,
 INSTALLED_APPS = [
 
     # Local Apps
-    'blog.apps.BlogConfig', # Adding app's BlogConfig(full path),  If  app has a custom configuration defined in its apps.py file
-    'users.apps.UsersConfig',
+    'Blog_App.blog.apps.BlogConfig', # Adding app's BlogConfig(full path),  If  app has a custom configuration defined in its apps.py file
+    'Blog_App.users.apps.UsersConfig',
 
     # Third-party apps
     'crispy_forms',     # For rendering Django forms with better HTML using a frontend framework
     'crispy_bootstrap5',
     'storages',
-
 
     # Default Django apps
     'django.contrib.admin',
