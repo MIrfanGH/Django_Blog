@@ -29,9 +29,9 @@ media/
 .idea/
 
 # Migrations (optional)
-*/migrations/*.py
-*/migrations/__pycache__/
-!*/migrations/__init__.py
+# */migrations/*.py
+# */migrations/__pycache__/
+# !*/migrations/__init__.py
 
 # Build Files
 *.egg-info/
