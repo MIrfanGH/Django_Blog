@@ -59,6 +59,7 @@ INSTALLED_APPS = [
 
 # Middleware stack to handle request/response processing, sessions, security, etc.
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
