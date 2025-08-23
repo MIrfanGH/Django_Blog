@@ -195,4 +195,4 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # Use S3 as t
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/' # Public URL for accessing media files stored in S3
 
 
-django_heroku.settings(locals()) # 
+django_heroku.settings(locals()) # Apply Heroku-specific settings (DB, static files, Allowed Hosts etc.)
