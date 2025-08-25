@@ -1,0 +1,118 @@
+
+/* Set background color and base text color for the entire page */
+body {
+  background: #fafafa;
+  color: #333333;
+  margin-top: 5rem; /* Add top margin to avoid overlap with fixed header */
+}
+
+
+/* Headings (h1 to h6) styled with a slightly darker tone for better contrast */
+h1, h2, h3, h4, h5, h6 {
+  color: #444444;
+}
+
+
+/* Remove default top margin for unordered lists */
+ul {
+  margin: 0;
+}
+
+
+/* >>>>>>> Navbar Styles <<<<<<<< */
+
+/* Custom background color for navbar */
+.bg-steel {
+  background-color: #5f788a;
+}
+
+/* Style navbar links with a muted color */
+.site-header .navbar-nav .nav-link {
+  color: #cbd5db;
+}
+
+/* Change link color on hover for better interaction feedback */
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+/* Highlight active navigation link */
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+
+
+
+/*  -- Content Section Styles -- */
+
+/* Card-style container for main content blocks (Dark card with border and padding) */
+.content-section {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+
+/* -- Article Styles -- */
+
+/* Set article title color */
+.article-title {
+  color: #444444;
+}
+
+/* Change color (Light blue hover effect for article titles) and remove underline on hover for article titles */
+a.article-title:hover {
+  color: #428bca;
+  text-decoration: none;
+}
+
+/* Preserve whitespace and line breaks in article content */
+.article-content {
+  white-space: pre-line;
+}
+
+/* Style for article images (e.g., avatars or thumbnails) */
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+}
+
+/* Metadata section below article title (e.g., author, date) */
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e3e3e3;
+}
+
+/* Enhance metadata link hover effect */
+.article-metadata a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+/* Standard size for inline SVG icons used in articles */
+.article-svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+
+/* -- Account/Profile Page Styles -- */
+
+/* User profile image dimensions and spacing */
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+
+/* Large heading for usernames or profile titles*/
+.account-heading {
+  font-size: 2.5rem;
+}
+
