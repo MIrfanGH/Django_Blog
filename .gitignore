@@ -21,7 +21,7 @@ Desktop.ini
 venv/
 
 # Static and Media Files
-static/
+staticfiles/
 media/
 
 # Editor Config
