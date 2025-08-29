@@ -9,7 +9,7 @@ class Profile(models.Model):
     """ Extends the built-in User model to include profile image support.
         Automatically resizes uploaded images larger than 300x300 pixels. """
     user = models.OneToOneField(User, on_delete=models.CASCADE) # Links one User to one Profile
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics/')
+    image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics/')
 
 
     # First save the instance to ensure self.image.path is available.
