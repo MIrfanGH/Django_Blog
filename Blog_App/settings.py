@@ -136,13 +136,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+# >>> STATIC FILES <<<
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
@@ -152,9 +150,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Media files (user-uploaded content)
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  
-MEDIA_URL = '/media/'  
+# for saving media files locally 
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  
+# MEDIA_URL = '/media/'  
 """
 MEDIA_ROOT---> The absolute filesystem path where Django stores uploaded media files
 MEDIA_URL---> The URL that handles serving the files from MEDIA_ROOT in the browser
@@ -187,17 +185,19 @@ EMAIL_HOST_USER = os.environ.get('USER_EMAIL')  # Sender email address fetched f
 EMAIL_HOST_PASSWORD = os.environ.get('USER_EMAIL_PASSWORD')  # App-specific password or SMTP password fetched from environment variables
 
 
-""" >>>>>>>>>>>>>>>>>> AWS S3 <<<<<<<<<<<<<<<<<<<<<<< """
+""" >>>>>>>>> MEDIA FILES (AWS S3 only, no local MEDIA_ROOT) <<<<<<<<< """
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')   # AWS IAM user's Access Key ID for authentication
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')   # AWS IAM user's Secret Access Key for authentication
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 
 AWS_S3_FILE_OVERWRITE = False  # Prevent overwriting files with the same name in S3
+AWS_S3_REGION_NAME = "ap-south-1" 
+AWS_QUERYSTRING_AUTH = False   # ensures clean public URLs
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # Use S3 as the default storage backend for media files
 
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/' # Public URL for accessing media files stored in S3
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/' # Public URL for accessing media files stored in S3
 
 
 django_heroku.settings(locals()) # Apply Heroku-specific settings (DB, static files, Allowed Hosts etc.)
