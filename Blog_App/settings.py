@@ -150,15 +150,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# for saving media files locally 
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  
-# MEDIA_URL = '/media/'  
-"""
-MEDIA_ROOT---> The absolute filesystem path where Django stores uploaded media files
-MEDIA_URL---> The URL that handles serving the files from MEDIA_ROOT in the browser
-              Used in templates for displaying uploaded content (e.g., user profile images).
-"""
-
 
 # Crispy Forms configuration
 CRISPY_TEMPLATE_PACK = 'bootstrap5' # Specifies that Bootstrap 5 should be used for rendering forms
