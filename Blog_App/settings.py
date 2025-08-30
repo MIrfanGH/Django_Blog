@@ -185,6 +185,8 @@ EMAIL_HOST_USER = os.environ.get('USER_EMAIL')  # Sender email address fetched f
 EMAIL_HOST_PASSWORD = os.environ.get('USER_EMAIL_PASSWORD')  # App-specific password or SMTP password fetched from environment variables
 
 
+django_heroku.settings(locals()) # Apply Heroku-specific settings (DB, static files, Allowed Hosts etc.)
+
 """ >>>>>>>>> MEDIA FILES (AWS S3 only, no local MEDIA_ROOT) <<<<<<<<< """
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')   # AWS IAM user's Access Key ID for authentication
@@ -199,5 +201,3 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # Use S3 as t
 
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/' # Public URL for accessing media files stored in S3
 
-
-django_heroku.settings(locals()) # Apply Heroku-specific settings (DB, static files, Allowed Hosts etc.)
