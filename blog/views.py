@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from users.mixins import AuthorRequiredMixin
 from django.views.generic import (
                         DetailView, 
                         ListView,
@@ -47,19 +48,19 @@ class PostDetailView(DetailView):
 
 
 
-class PostCreateView(LoginRequiredMixin, CreateView):
+class PostCreateView(AuthorRequiredMixin, LoginRequiredMixin, CreateView):
     """Allows logged-in users to create a new post."""
     model = Post
     fields = ['title', 'content_nature', 'content'] 
 
-    # Assign the current user as the author before saving
+    # Assign the current user as the author before saving by overriding the default method
     def form_valid(self, form):  
         form.instance.author = self.request.user 
         return super().form_valid(form) 
     
 
 
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class PostUpdateView(AuthorRequiredMixin, LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Allows logged in authors(users) to update their own posts. """
     model = Post
     fields = ['title', 'content_nature', 'content']  
@@ -69,13 +70,17 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
     
     def test_func(self):
-        # Allow update only if the logged-in user is the author
-        post = self.get_object() # will get the current post's instance
-        return self.request.user == post.author
+        # Allow update only if:
+                            # 1. The user passes the role check from AuthorRequiredMixin (super().test_func()),   MRO and Mixins working matters here
+                            # 2. The logged-in user is the original author of the post
+
+        post = self.get_object() 
+        return super().test_func() and self.request.user == post.author 
+        
 
 
 
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class PostDeleteView(AuthorRequiredMixin, LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Allows logged in authors to delete their own posts """
     model = Post
     template_name = 'blog/post_delete.html' # Custom template used  default is 'post_confirm_delete.html'
@@ -83,9 +88,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         post = self.get_object() 
-        if self.request.user == post.author:
-            return True 
-        return False
+        return super().test_func() and self.request.user == post.author 
+            
 
 
 def about(request):
