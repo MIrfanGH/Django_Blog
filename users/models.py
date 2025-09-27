@@ -8,8 +8,15 @@ from PIL import Image
 class Profile(models.Model):
     """ Extends the built-in User model to include profile image support.
         Automatically resizes uploaded images larger than 300x300 pixels. """
+    
+    ROLE_CHOICES = [
+        ('Reader', 'Reader'),
+        ('Author', 'Author'),
+        ('Admin', 'Admin'),
+    ]
     user = models.OneToOneField(User, on_delete=models.CASCADE) # Links one User to one Profile
     image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics/')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Reader')
 
 
     # First save the instance to ensure self.image.path is available.
