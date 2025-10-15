@@ -24,6 +24,7 @@ urlpatterns = [
     # Routes for user authentication and profile management
     path('users/', include('users.urls')),
 
+
     # Password reset routes 
     path('password-reset/',auth_views.PasswordResetView.as_view(
         template_name='users/password_reset.html'),
@@ -36,7 +37,10 @@ urlpatterns = [
         name='password_reset_confirm'),
     path('password-reset/complete',auth_views.PasswordResetCompleteView.as_view(
         template_name='users/password_reset_complete.html'),
-        name='password_reset_complete')
+        name='password_reset_complete'),
+
+    # Routes for payments management
+    path('payments/', include('payments.urls')),
 
 
 ]
