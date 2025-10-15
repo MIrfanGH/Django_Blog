@@ -24,7 +24,7 @@
                 {% if user.is_authenticated %}
                     <!-- Authenticated User Options -->
                     <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
-                    <a class="nav-item nav-link" href="#">Donate</a>
+                    <a class="nav-item nav-link" href="{% url 'donation_landing_page' %}">Donate</a>
 
                     <!-- Logout handled via POST form for CSRF protection -->
                     <form method="post" action="{% url 'logout' %}">
