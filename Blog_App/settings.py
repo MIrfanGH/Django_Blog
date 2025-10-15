@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Local Apps
     'blog.apps.BlogConfig', # Adding app's BlogConfig(full path),  If  app has a custom configuration defined in its apps.py file
     'users.apps.UsersConfig',
+    'payments',
 
     # Third-party apps
     'crispy_forms',     # For rendering Django forms with better HTML using a frontend framework
@@ -77,7 +78,7 @@ ROOT_URLCONF = 'Blog_App.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [], #[BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -192,3 +193,8 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # Use S3 as t
 
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/' # Public URL for accessing media files stored in S3
 
+
+""" >>>>>>>>> STRIPE Configurations <<<<<<<<< """
+
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
