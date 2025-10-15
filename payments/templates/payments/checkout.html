@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Support My Blog ❤️</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #f8f9fd;
+      }
+      .donation-box {
+        text-align: center;
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        margin-bottom: 20px;
+      }
+      p {
+        color: #666;
+        margin-bottom: 25px;
+      }
+      button {
+        background: #5469d4;
+        color: #ffffff;
+        border-radius: 4px;
+        border: none;
+        padding: 12px 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      button:hover {
+        filter: contrast(115%);
+      } 
+
+    </style>
+  </head>
+
+  <body>
+    <section class="donation-box">
+      <h2>Support This Blog ❤️</h2>
+      <p>Your small contribution helps keep this blog alive and growing!</p>
+      <input
+      type="number"
+      id="donation-amount"
+      min="1"
+      placeholder="Enter amount (USD)"
+      required
+      style="padding: 8px; width: 200px; margin-bottom: 10px;"
+      />
+      <button type="button" id="checkout-button">Donate </button>
+      {% comment %}<a  href="{% url 'blog_home' %}" class="btn btn-secondary">Back</a> {% endcomment %}
+    </section>
+
+    {% csrf_token %}
+
+    <script type="text/javascript">
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+      const checkoutButton = document.getElementById("checkout-button");
+
+      checkoutButton.addEventListener("click", function () {
+        const amountInput = document.getElementById("donation-amount");
+        const amount = amountInput ? amountInput.value : 0;
+
+        if (!amount || amount <= 0) {
+          alert("Please enter a valid amount before donating.");
+          return;
+        }
+
+        fetch("{% url 'create-donation-session' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({ amount: amount }),  // send amount to backend
+        })
+          .then((response) => response.json())
+          .then((session) => stripe.redirectToCheckout({ sessionId: session.id }))
+          .then((result) => {
+            if (result.error) {
+              alert(result.error.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      });
+    </script>
+  </body>
+</html>
