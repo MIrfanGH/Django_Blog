@@ -177,24 +177,36 @@ EMAIL_HOST_USER = os.environ.get('USER_EMAIL')  # Sender email address fetched f
 EMAIL_HOST_PASSWORD = os.environ.get('USER_EMAIL_PASSWORD')  # App-specific password or SMTP password fetched from environment variables
 
 
-django_heroku.settings(locals()) # Apply Heroku-specific settings (DB, static files, Allowed Hosts etc.)
-
-""" >>>>>>>>> MEDIA FILES (AWS S3 only, no local MEDIA_ROOT) <<<<<<<<< """
+""" =========================== MEDIA FILES (AWS S3 only, no local MEDIA_ROOT) =========================== """
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')   # AWS IAM user's Access Key ID for authentication
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')   # AWS IAM user's Secret Access Key for authentication
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = "ap-south-1" 
+
+AWS_DEFAULT_ACL = 'public-read'  #  Prevents boto3 from setting private ACLs (without it files are uploaded as private)
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400",
+}
+# Django 5.x uses STORAGES setting
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 AWS_S3_FILE_OVERWRITE = False  # Prevent overwriting files with the same name in S3
-AWS_S3_REGION_NAME = "ap-south-1" 
 AWS_QUERYSTRING_AUTH = False   # ensures clean public URLs
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # Use S3 as the default storage backend for media files
-
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/' # Public URL for accessing media files stored in S3
 
 
-""" >>>>>>>>> STRIPE Configurations <<<<<<<<< """
+
+""" =========================== STRIPE Configurations =========================== """
 
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET_KEY = os.environ.get("STRIPE_WEBHOOK_SECRET_KEY")
