@@ -15,7 +15,7 @@ class Profile(models.Model):
         ('Admin', 'Admin'),
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE) # Links one User to one Profile
-    image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics/')
+    image = models.ImageField(default="default.jpg", upload_to='profile_pics')
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Reader')
 
 
