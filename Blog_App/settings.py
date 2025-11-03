@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     # Third-party apps
     'crispy_forms',     # For rendering Django forms with better HTML using a frontend framework
     'crispy_bootstrap5',
-    'storages',
+    'storages', # Provides support for using AWS S3 for static/media file storage
+    'whitenoise.runserver_nostatic', # Enables WhiteNoise to serve static files during development (avoids duplicate static handling)
+                                     # serves static files efficiently
 
     # Default Django apps
     'django.contrib.admin',
@@ -52,7 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', # Core Django app essential for collecting, organizing, and referencing static assets across apps. 
+                                  # organizes and collects static files
     
 ]
 

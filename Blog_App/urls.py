@@ -45,7 +45,9 @@ urlpatterns = [
 
 ]
 
-# Serve media files (e.g., profile images) during development (when DEBUG = True)
+# Serve media/static files (e.g., profile images) during development (when DEBUG = True)
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)  # Add this line
  
