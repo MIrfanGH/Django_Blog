@@ -47,3 +47,7 @@ coverage.xml
 
 # Local/Custom Settings
 local_settings.py
+
+# AWS & SSH Keys (for connecting my EC2 instance to SSH )
+*.pem     
+blogkeypair.pem   
