@@ -28,7 +28,8 @@ DEBUG = os.environ.get("DEBUG")
 
 # Hosts/domain names the app can serve; required for security and header validation
 ALLOWED_HOSTS = ['127.0.0.1' ,
-                 # 'mydailyblog-de8f0c5ea03b.herokuapp.com'
+                 # 'mydailyblog-de8f0c5ea03b.herokuapp.com',
+                 '65.1.148.49',
                  ]
 
 
