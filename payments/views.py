@@ -47,9 +47,6 @@ to 'succeeded' via webhook after successful payment.
 class CreateDonationCheckoutSession(View):
     def post(self, request, *args, **kwargs):
         
-        # Base URL for redirect after payment
-        YOUR_DOMAIN = "http://127.0.0.1:8000"
-
         # Parse JSON body from frontend (contains donation amount)
         data = json.loads(request.body)  
         amount = int(float(data.get("amount")) * 100)  # Stripe uses cents
@@ -85,8 +82,8 @@ class CreateDonationCheckoutSession(View):
             },
 
             # Redirect URLs after payment
-            success_url=YOUR_DOMAIN + '/payments/success/',
-            cancel_url=YOUR_DOMAIN + '/payments/cancel/',
+            success_url = request.build_absolute_uri('/payments/success/'),
+            cancel_url = request.build_absolute_uri('/payments/cancel/')
         )
 
 
