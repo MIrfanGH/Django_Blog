@@ -95,20 +95,40 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Blog_App.wsgi.application'
 
 
+# ============================= DATABASE CONFIGURATION =============================
+# Use PostgreSQL in production (AWS RDS), SQLite in development
 
-# Database configuration :  AWS RDS (Postgresql) production database
-DATABASES = {
+
+if os.getenv('DJANGO_ENV', 'development') == 'production':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# ============================= Redis coching Congiguration=============================
+
+CACHES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',  
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
     }
 }
-
-
 
 # Password validation for enhanced security
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

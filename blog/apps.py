@@ -10,3 +10,7 @@ class BlogConfig(AppConfig):
 
     # Defines the name of the app (should match the app directory)
     name = 'blog'
+
+      
+    def ready(self):
+        import blog.signals
