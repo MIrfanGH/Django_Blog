@@ -23,15 +23,12 @@ venv/
 # Static and Media Files
 staticfiles/
 media/
+profile_pics
 
 # Editor Config
 .vscode/
 .idea/
 
-# Migrations (optional)
-# */migrations/*.py
-# */migrations/__pycache__/
-# !*/migrations/__init__.py
 
 # Build Files
 *.egg-info/
@@ -51,3 +48,6 @@ local_settings.py
 # AWS & SSH Keys (for connecting my EC2 instance to SSH )
 *.pem     
 blogkeypair.pem   
+
+celerybeat-schedule*
+*.thumbnail
