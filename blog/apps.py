@@ -12,5 +12,10 @@ class BlogConfig(AppConfig):
     name = 'blog'
 
       
+    """ > ready() = built into Django’s AppConfig class.
+          a app startup hook that Django calls once the app registry is fully populated 
+            (i.e., when Django has loaded all installed apps).
+        - Importing signals here ensures they’re registered once per app load.
+    """
     def ready(self):
         import blog.signals
