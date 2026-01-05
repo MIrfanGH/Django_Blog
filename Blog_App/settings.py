@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     # Local Apps
     'blog.apps.BlogConfig', # Adding app's BlogConfig(full path),  If  app has a custom configuration defined in its apps.py file
     'users.apps.UsersConfig',
-    'payments',
+    'payments', #  Implements the donation feature 
+    'summarizer',  # Handles AI blog summarization 
 
     # Third-party apps
     'crispy_forms',     # For rendering Django forms with better HTML using a frontend framework
@@ -269,3 +270,8 @@ MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaw
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET_KEY = os.environ.get("STRIPE_WEBHOOK_SECRET_KEY")
+
+
+""" =========================== Summarization API key =========================== """
+
+GROK_SUMMARIZATION_KEY = os.environ.get("GROK_SUMMARIZATION_KEY")
