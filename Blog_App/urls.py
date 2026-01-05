@@ -42,6 +42,8 @@ urlpatterns = [
     # Routes for payments management
     path('payments/', include('payments.urls')),
 
+    # Routes to the summarizer app
+    path('summarize/', include('summarizer.urls'))
 
 ]
 

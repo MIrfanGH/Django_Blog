@@ -1,10 +1,438 @@
-{%  extends "blog/base.html"  %}
-    
+{% extends "blog/base_without_sidebar.html" %}
+{% load static %}
+
+{% block title %}About - BlogPlatform{% endblock %}
+
 {% block content %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        margin-bottom: 50px;
+        text-align: center;
+    }
 
-  <h1>About</h1>
-  <p>Content coming soon.</p>
+    .about-hero h1 {
+        font-size: 3em;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
 
+    .about-hero p {
+        font-size: 1.3em;
+        opacity: 0.95;
+        max-width: 800px;
+        margin: 0 auto;
+    }
 
+    .about-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+    }
+
+    .section {
+        margin-bottom: 60px;
+    }
+
+    .section-title {
+        font-size: 2.2em;
+        color: #1e3c72;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 4px solid #667eea;
+        font-weight: 600;
+    }
+
+    .intro-text {
+        font-size: 1.15em;
+        line-height: 1.9;
+        color: #444;
+        margin-bottom: 30px;
+    }
+
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .tech-card {
+        background: #f8f9fa;
+        border-left: 5px solid #667eea;
+        padding: 30px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .tech-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.25);
+    }
+
+    .tech-card h3 {
+        color: #2a5298;
+        margin-bottom: 18px;
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+
+    .tech-card ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .tech-card li {
+        padding: 8px 0;
+        color: #555;
+        position: relative;
+        padding-left: 25px;
+        line-height: 1.6;
+    }
+
+    .tech-card li:before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: #667eea;
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .feature-card {
+        background: white;
+        border: 2px solid #e0e0e0;
+        padding: 30px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .feature-card h4 {
+        color: #1e3c72;
+        margin-bottom: 12px;
+        font-size: 1.4em;
+        font-weight: 600;
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.7;
+        font-size: 1.05em;
+    }
+
+    .highlight-box {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        padding: 40px;
+        border-radius: 15px;
+        margin: 40px 0;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .highlight-box h3 {
+        color: #d63031;
+        margin-bottom: 18px;
+        font-size: 1.8em;
+        font-weight: 600;
+    }
+
+    .highlight-box p {
+        color: #2d3436;
+        font-size: 1.15em;
+        line-height: 1.9;
+    }
+
+    .info-box {
+        background: #e8f4f8;
+        border-left: 6px solid #3498db;
+        padding: 30px 35px;
+        margin: 30px 0;
+        border-radius: 8px;
+    }
+
+    .info-box p {
+        color: #2c3e50;
+        font-size: 1.1em;
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .info-box strong {
+        color: #1e3c72;
+        font-size: 1.15em;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+        margin: 40px 0;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .stat-number {
+        font-size: 2.5em;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        font-size: 1.1em;
+        opacity: 0.95;
+    }
+
+    @media (max-width: 768px) {
+        .about-hero {
+            padding: 50px 20px;
+        }
+
+        .about-hero h1 {
+            font-size: 2em;
+        }
+
+        .about-hero p {
+            font-size: 1.1em;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+        }
+
+        .tech-grid,
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="about-hero">
+    <h1>Production-Grade Blogging Platform</h1>
+    <p>A full-stack application showcasing modern web development, cloud architecture, and AI integration</p>
+</div>
+
+<div class="about-container">
+    <div class="section">
+        <h2 class="section-title">Project Overview</h2>
+        <p class="intro-text">
+            This blogging platform represents a comprehensive approach to building production-ready web applications. 
+            Combining the stability and features of Django with the high-performance capabilities of FastAPI, 
+            the platform integrates modern cloud infrastructure to deliver a scalable, reliable experience for 
+            both content creators and readers. Every architectural decision prioritizes real-world deployment scenarios, 
+            security best practices, and enterprise-grade scalability.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Technical Architecture</h2>
+        
+        <div class="tech-grid">
+            <div class="tech-card">
+                <h3>🔧 Core Backend</h3>
+                <ul>
+                    <li>Django framework with MVT architecture</li>
+                    <li>PostgreSQL database (AWS RDS)</li>
+                    <li>Role-based access control (RBAC)</li>
+                    <li>Email verification & password reset</li>
+                    <li>Advanced filtering and pagination</li>
+                    <li>Django Admin customization</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h3>⚡ FastAPI Microservices</h3>
+                <ul>
+                    <li>High-performance async API endpoints</li>
+                    <li>OAuth2 + JWT authentication</li>
+                    <li>Router-Schema-Service pattern</li>
+                    <li>Post management APIs</li>
+                    <li>Analytics and metrics endpoints</li>
+                    <li>AI-powered content tools</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h3>☁️ Cloud Infrastructure</h3>
+                <ul>
+                    <li>AWS EC2 deployment with automation</li>
+                    <li>S3 for media storage</li>
+                    <li>CloudFront CDN for global delivery</li>
+                    <li>Custom VPC networking</li>
+                    <li>Nginx reverse proxy with SSL/HTTPS</li>
+                    <li>Route 53 DNS management</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h3>🚀 Performance & Scale</h3>
+                <ul>
+                    <li>Redis caching layer</li>
+                    <li>Celery for async task processing</li>
+                    <li>Background email queues</li>
+                    <li>Database query optimization</li>
+                    <li>Static asset optimization</li>
+                    <li>Load balancing ready</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Core Features</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🔐</span>
+                <h4>Secure Authentication</h4>
+                <p>
+                    Complete user management system with email verification, secure password reset workflows, 
+                    session management, and JWT-based API authentication for stateless interactions.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📝</span>
+                <h4>Content Management</h4>
+                <p>
+                    Full CRUD operations with rich text editing, media uploads to AWS S3, draft/publish workflows, 
+                    categories and tags, and granular permission controls.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🎨</span>
+                <h4>Rich Media Handling</h4>
+                <p>
+                    Image uploads with optimization, automatic CDN distribution via CloudFront, 
+                    permanent storage on S3, and responsive image delivery for all devices.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h4>Performance Optimized</h4>
+                <p>
+                    Redis caching for frequently accessed content, optimized database queries with select_related 
+                    and prefetch_related, CDN-served static assets, and async processing.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h4>Analytics & Insights</h4>
+                <p>
+                    Dedicated FastAPI endpoints tracking post views, user engagement metrics, 
+                    content performance analytics, and real-time dashboard data.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🔄</span>
+                <h4>Background Processing</h4>
+                <p>
+                    Celery workers handle email sending, scheduled tasks, data aggregation, 
+                    and heavy processing operations without blocking user requests.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="highlight-box">
+            <h3>🤖 AI-Powered Content Tools</h3>
+            <p>
+                A standout feature of this platform is its integration of cutting-edge AI capabilities. 
+                Content creators can leverage large language model (LLM) technology for intelligent content 
+                suggestions, automated draft refinement, tone and sentiment analysis, SEO optimization recommendations, 
+                and creative ideation assistance. These tools are seamlessly integrated into the blogging workflow, 
+                demonstrating practical application of modern AI in a production environment. The AI features are 
+                powered through FastAPI microservices, ensuring high performance and scalability.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Production Deployment</h2>
+        
+        <div class="info-box">
+            <p>
+                <strong>Enterprise-Grade AWS Infrastructure:</strong> The application is deployed on AWS EC2 instances 
+                with automated provisioning and configuration management. Nginx serves as a reverse proxy with SSL/TLS 
+                encryption for all traffic. Media files are stored in S3 with CloudFront CDN for optimal global 
+                performance and reduced latency. The database layer uses AWS RDS (PostgreSQL) for automated backups, 
+                point-in-time recovery, and multi-AZ deployment readiness. Custom VPC networking ensures secure 
+                isolation with proper security groups and network ACLs.
+            </p>
+        </div>
+
+        <div class="info-box" style="background: #f0f9ff; border-left-color: #667eea;">
+            <p>
+                <strong>Future Scalability:</strong> The infrastructure is designed with horizontal scaling in mind. 
+                Prepared for Auto Scaling Groups (ASG), Elastic Load Balancers (ELB), and full Infrastructure as Code 
+                (IaC) automation with Terraform. The microservices architecture allows independent scaling of different 
+                components based on traffic patterns and resource requirements.
+            </p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Development Approach</h2>
+        
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-number">2</span>
+                <span class="stat-label">Backend Frameworks</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">5+</span>
+                <span class="stat-label">AWS Services</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Production Ready</span>
+            </div>
+        </div>
+
+        <p class="intro-text" style="margin-top: 30px;">
+            This project demonstrates a holistic approach to modern web development—combining robust backend engineering, 
+            cloud-native architecture, performance optimization, security best practices, and cutting-edge AI capabilities. 
+            Every technical decision was made with production deployment, maintainability, and scalability as core priorities. 
+            The result is a real-world application that showcases full-stack development skills, DevOps practices, 
+            and cloud infrastructure expertise.
+        </p>
+    </div>
+</div>
 {% endblock %}
-
