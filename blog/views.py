@@ -83,6 +83,34 @@ class PostListView(ListView):
         return posts
 
 
+    
+    def get_context_data(self, **kwargs):
+
+        """
+        Extends context with one-time AI summary from session.
+        
+        Retrieves and removes 'ai_summary' from session storage, making it
+        available only for the current request.
+        
+        Returns:
+            dict: Context with 'ai_summary' key (str or None)
+            
+        Note:
+            Uses session.pop() for atomic read-and-delete to ensure summary
+            displays exactly once after being set by asynchronous tasks.
+        """
+
+
+        context = super().get_context_data(**kwargs)
+
+        # One-time, request-scoped AI summary
+        context["ai_summary"] = self.request.session.pop(
+            "ai_summary", None
+        )
+
+        return context
+
+
 
 class SameUserPostListView(ListView):
     """
@@ -316,8 +344,4 @@ def about(request):
     
     return render(request, 'blog/about.html', {'title':'About'}) 
     # Manually define context inside the render(), passing this dictionary directly from view to the template.
-
-
-
-
 
