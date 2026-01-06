@@ -4,10 +4,10 @@
         <div class="container">
 
           <!-- Site Branding/Logo -->
-          <a class="navbar-brand mr-4" href="#">MyDailyBlog</a>
+          <a class="navbar-brand me-4" href="#">MyDailyBlog</a>
 
           <!-- Toggler Button for Collapsing Navbar on Small Screens(Mobile view) -->
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse justify-content-between" id="navbarToggle">
@@ -27,7 +27,7 @@
                     <a class="nav-item nav-link" href="{% url 'donation_landing_page' %}">Donate</a>
 
                     <!-- Logout handled via POST form for CSRF protection -->
-                    <form method="post" action="{% url 'logout' %}">
+                    <form method="post" action="{% url 'logout' %}"  class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-link nav-link" style="padding: 0;">Logout</button>
                     </form>
