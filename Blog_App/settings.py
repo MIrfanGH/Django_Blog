@@ -273,4 +273,4 @@ STRIPE_WEBHOOK_SECRET_KEY = os.environ.get("STRIPE_WEBHOOK_SECRET_KEY")
 
 """ =========================== Summarization API key =========================== """
 
-GROK_SUMMARIZATION_KEY = os.environ.get("GROK_SUMMARIZATION_KEY")
+GROQ_SUMMARIZATION_KEY = os.environ.get("GROQ_SUMMARIZATION_KEY")
