@@ -9,7 +9,7 @@ from groq import Groq
 
 logger = logging.getLogger(__name__)
 
-GROK_SUMMARIZATION_KEY = settings.GROK_SUMMARIZATION_KEY
+GROQ_SUMMARIZATION_KEY = settings.GROQ_SUMMARIZATION_KEY
 
 
 def generate_blog_summary(text: str) -> Optional[str]:
@@ -32,11 +32,11 @@ def generate_blog_summary(text: str) -> Optional[str]:
     """
     try:
 
-        if not GROK_SUMMARIZATION_KEY:
+        if not GROQ_SUMMARIZATION_KEY:
             logger.error("Summarization API key not set. Please configure GROK_SUMMARIZATION_KEY")
             return None
         # Set up the Groq client to access their LLM API
-        client = Groq(api_key=GROK_SUMMARIZATION_KEY)
+        client = Groq(api_key=GROQ_SUMMARIZATION_KEY)
 
         # Prompt explicitly instructs the LLM to summarize without altering facts
         prompt = f"Summarize the following blog post in 3-4 concise lines.\
