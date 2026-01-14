@@ -234,7 +234,8 @@ EMAIL_USE_TLS = True   # Enable TLS encryption for secure email transmission
 EMAIL_HOST_USER = os.environ.get('HOST_EMAIL')  # Sender(mine) email address fetched from environment variables
 EMAIL_HOST_PASSWORD = os.environ.get('HOST_EMAIL_PASSWORD')  # App-specific password or SMTP password fetched from environment variables
 
-
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
 
 """ =========================== MEDIA FILES (AWS S3 only, no local MEDIA_ROOT) =========================== """
 
