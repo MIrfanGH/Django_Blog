@@ -82,12 +82,21 @@ class CreateDonationCheckoutSession(View):
                         'currency': 'usd',
                         'unit_amount': amount,
                         'product_data': {
-                            'name': 'Donation to keep alive this Blog ❤️',
+                            'name': '❤️ Blog Donation (DEMO)',
+                            'description': '⚠️ TEST MODE: Use card 4242 4242 4242 4242 | A valid expiration date | Any 3 numbers as CVC |',
                         },
                     },
                     'quantity': 1,
                 }],
                 mode='payment',  # One-time payment (not subscription)
+
+                # ADD THIS: Shows above the Pay button
+                custom_text={
+                    'submit': {
+                        'message': '⚠️ This is a test payment - no real charges will be made'
+                    }
+                },
+                
                 metadata={
 
                     "donation_id":donation.id,
@@ -96,6 +105,7 @@ class CreateDonationCheckoutSession(View):
                 # Redirect URLs after payment
                 success_url = request.build_absolute_uri('/payments/success/'),
                 cancel_url = request.build_absolute_uri('/payments/cancel/')
+                
             )
             logger.info(f"Created Stripe checkout session: session_id={session.id}, donation_id={donation.id}")
 
