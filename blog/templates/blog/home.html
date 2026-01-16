@@ -31,7 +31,8 @@
         </h2>
 
 
-<!-- >>>>>>>>>>>>>>>>>>>>>>>>> Summary / Preview <<<<<<<<<<<<<<<<<<<<<<<<<< -->
+<!-- >>>>>>>>>>>>>>>>>>>>>>>>> Summary Handling <<<<<<<<<<<<<<<<<<<<<<<<<< -->
+
         <form method="post" action="{% url 'summarize_post' post.id %}">
             {% csrf_token %}
             <button class="btn btn-sm btn-outline-primary">
@@ -43,15 +44,18 @@
                 <strong>AI Summary</strong>
                 <p>{{ ai_summary.summary }}</p>
             </div>
-        {% else %}
-            <p class="article-content">
-                {{ post.content|truncatewords:40 }}
-            </p>
         {% endif %}
 
-       
+        <p class="article-content">
+            {{ post.content|truncatewords:40 }} 
+            <a class="full-blog"
+               href="{% url 'post_detail' post.id %}">Read full
+               
+            </a>
+            
+        </p>
 
-    </div>
+    </div> 
 </article>
 {% endfor %}
 

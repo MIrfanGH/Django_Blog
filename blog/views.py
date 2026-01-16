@@ -81,33 +81,38 @@ class PostListView(ListView):
         )
         cache.set(cache_key, posts, 3600)
         return posts
-
-
     
     def get_context_data(self, **kwargs):
-
         """
-        Extends context with one-time AI summary from session.
+        Extend context with AI-generated summary from cache if requested.
         
-        Retrieves and removes 'ai_summary' from session storage, making it
-        available only for the current request.
+        Checks for '?show_summary={post_id}' parameter and retrieves the
+        cached summary from Redis using key 'post_summary_{post_id}'.
         
         Returns:
-            dict: Context with 'ai_summary' key (str or None)
-            
-        Note:
-            Uses session.pop() for atomic read-and-delete to ensure summary
-            displays exactly once after being set by asynchronous tasks.
+            dict: Context with 'ai_summary' dict containing post_id and summary,
+                  or None if parameter absent or cache miss
         """
-
-
         context = super().get_context_data(**kwargs)
-
-        # One-time, request-scoped AI summary
-        context["ai_summary"] = self.request.session.pop(
-            "ai_summary", None
-        )
-
+        
+        show_summary_id = self.request.GET.get('show_summary')
+        if not show_summary_id:
+            context['ai_summary'] = None
+            return context
+        
+        cache_key = f"post_summary_{show_summary_id}"
+        summary_text = cache.get(cache_key)
+        
+        if summary_text:
+            context['ai_summary'] = {
+                'post_id': int(show_summary_id),
+                'summary': summary_text
+            }
+            logger.debug(f'AI summary retrieved for post {show_summary_id}')
+        else:
+            context['ai_summary'] = None
+            logger.warning(f'No cached summary found for post {show_summary_id}')
+        
         return context
 
 

@@ -5,36 +5,43 @@ from blog.models import Post
 from .services import generate_blog_summary
 from django.core.cache import cache
 
+from django.contrib import messages
 logger = logging.getLogger(__name__)
 
 
-@require_POST   # restricts access to the view so that only HTTP POST requests are allowed.
+import logging
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
+from django.contrib import messages
+from django.core.cache import cache
+from blog.models import Post
+from .services import generate_blog_summary
+
+logger = logging.getLogger(__name__)
+
+
+@require_POST
 def summarize_post(request, post_id):
     """
-    Synchronous summarization using AI.
+    Generate or retrieve cached AI summary for a blog post.
+    Redirects back to referrer with summary parameter on success.
     """
     post = get_object_or_404(Post, id=post_id)
-
     cache_key = f"post_summary_{post.id}"
     summary = cache.get(cache_key)
-    
-    if summary:  # To prevents the case where :  AI fails then summary = None, none cached for 1 hour
-        summary = cache.get(cache_key)
 
     if not summary:
         summary = generate_blog_summary(post.content)
-        cache.set(cache_key, summary, 60 * 60)
+        
+        if not summary:
+            messages.error(request, "Failed to generate summary. Please try again.")
+            logger.error(f"Failed to generate summary for post: {post.title}")
+            return redirect(request.META.get('HTTP_REFERER', 'blog_home'))
+        
+        cache.set(cache_key, summary, 60 * 60)  # Cache for 1 hour
 
-    # store post-specific summary in session
-    request.session["ai_summary"] = {
-        "post_id": post.id,
-        "summary": summary,
-    }
-     # Get the referrer URL to redirect back to the same page
-    referer = request.META.get('HTTP_REFERER')
-    if referer:
-        # Add anchor to scroll to the specific post
-        return redirect(f"{referer}#post-{post.id}")
-    
-    return redirect("blog_home")
-  
+    # Redirect back with summary parameter
+    referer = request.META.get('HTTP_REFERER', 'blog_home')
+    separator = '&' if '?' in referer else '?'
+    return redirect(f"{referer}{separator}show_summary={post.id}#post-{post.id}")
+
