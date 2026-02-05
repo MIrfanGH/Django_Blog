@@ -28,19 +28,15 @@ DEBUG = os.environ.get("DEBUG")
 
 
 # Hosts/domain names the app can serve; required for security and header validation
-# ALLOWED_HOSTS = ['127.0.0.1' , 'localhost',
-#                  '65.1.148.49', 'mydailyblog.me',  'www.mydailyblog.me',
-#                  'django-blog-custom-lb-2118569978.ap-south-1.elb.amazonaws.com', # AWS ALB DNS name
-#                  ]
+# ALLOWED_HOSTS = [
+#     '127.0.0.1',      # Local testing
+#     'localhost',      # Local testing
+#     'mydailyblog.me',  
+#     'www.mydailyblog.me',
+#     '.elb.amazonaws.com',  # allows requests from any AWS ELB subdomain
+# ]
 
-# Hosts/domain names the app can serve; required for security and header validation
-ALLOWED_HOSTS = [
-    '127.0.0.1',      # Local testing
-    'localhost',      # Local testing
-    'mydailyblog.me',  
-    'www.mydailyblog.me',
-    '.elb.amazonaws.com',  # allows requests from any AWS ELB subdomain
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
