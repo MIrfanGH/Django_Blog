@@ -37,6 +37,11 @@ ALLOWED_HOSTS = [
     # '.elb.amazonaws.com',  # allows requests from any AWS ELB subdomain
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.mydailyblog.me',
+    'https://mydailyblog.me',
+]
+
 # Application definition
 
 INSTALLED_APPS = [
