@@ -33,8 +33,8 @@ ALLOWED_HOSTS = [
     'localhost',      # Local testing
     'mydailyblog.me',  
     'www.mydailyblog.me',
-    'ec2-3-111-45-228.ap-south-1.compute.amazonaws.com',
-    # '.elb.amazonaws.com',  # allows requests from any AWS ELB subdomain
+    'ec2-43-205-121-233.ap-south-1.compute.amazonaws.com',
+    '.elb.amazonaws.com',  # allows requests from any AWS ELB subdomain
 ]
 
 CSRF_TRUSTED_ORIGINS = [
