@@ -85,35 +85,38 @@
 <div class="about-container">
     <div class="about-header">
         <h1>About This Blog</h1>
-        <p>A full-stack SaaS blogging platform built with Django</p>
+        <p>A production-grade Mini-SaaS blogging platform — built and deployed independently, end to end.</p>
     </div>
 
     <div class="section">
         <h2>About Me</h2>
         <p>
-            Hi, I'm <strong>Muhammad Irfan</strong>, a backend-focused Python developer with a strong
-            interest in building scalable, real-world web applications. 
-            I created this blogging platform to share knowledge, explore new technologies, 
-            and demonstrate practical software development skills.
+            Hi, I'm <strong>Muhammad Irfan</strong>, a backend engineer with 1.5 years of experience
+            building and shipping production systems using Python, Django, and FastAPI.
+            I care deeply about how systems behave under failure — not just under normal conditions.
+            Most of what I build is shaped by one question: what happens when this retries, races, or crashes?
         </p>
         <p>
-            This project is actively maintained and designed to mirror production-level backend systems used in modern SaaS applications.
+            This platform is my primary engineering project — actively maintained, continuously improved,
+            and built to reflect the reliability patterns I care about: distributed locking, idempotent
+            workflows, async pipelines, and failure-aware design.
         </p>
         <p>
-            You can reach me at: <strong>801.mirfan@gmail.com</strong>
+            You can reach me at: <strong>901.mirfan@gmail.com</strong>
         </p>
     </div>
 
     <div class="section">
         <h2>About This Project</h2>
         <p>
-            This project is a feature-rich blogging platform built using Django and deployed on AWS.
-            It goes beyond basic CRUD functionality and incorporates performance optimization,
-            background processing, caching strategies, and AI-powered features
+            A production Mini-SaaS platform built from scratch. The interesting
+            parts aren't the features; they're the failure modes I had to think through: cache stampedes,
+            duplicate webhook delivery, worker crashes mid-task, stale summaries after content changes.
+            Each one has a deliberate fix built in.
         </p>
         <p>
-            The project demonstrates real-world web development practices including database design, 
-            cloud deployment, security best practices.
+            The full stack runs on AWS with a custom VPC, Auto Scaling Group, and ALB —
+            stateless by design, scalable by default.
         </p>
     </div>
 
@@ -121,50 +124,44 @@
         <h2>Key Features</h2>
         <ul class="tech-list">
             <li>Full user authentication with email-based password reset</li>
-            <li>Role-based access control (author and admin permissions)</li>
-            <li>CRUD-enabled blog publishing with pagination and optimized queries</li>
-            <li>Redis caching with signal-driven cache invalidation</li>
-            <li>Celery-based asynchronous background task processing</li>
-            <li>Stripe Checkout–based donation system with webhook event handling</li>
-            <li>On-demand AI-powered blog summarization using LLMs</li>
-            <li>Non-destructive AI summaries that preserve original content</li>
-            <li>AWS S3 for media and static asset storage</li>
-            <li>Production deployment using Nginx and Gunicorn on AWS EC2</li>
-        <br>
-            <h5>Planned Enhancements</h5>
-            <li>Infrastructure autoscaling using Terraform</li>
-
+            <li>Role-based access control (Reader / Author / Admin) via custom Django mixins</li>
+            <li>Blog CRUD with pagination and select_related query optimization</li>
+            <li>Redis caching with signal-driven invalidation on every post change</li>
+            <li>Async Celery pipelines with exponential backoff and distributed lock lifecycle management</li>
+            <li>Stripe donations with HMAC-verified webhooks and two-layer idempotency</li>
+            <li>AI summarization — async, cache-aside with DB fallback, stampede-protected</li>
+            <li>Profile image processing via Celery: S3 download → resize → re-upload, non-blocking</li>
+            <li>Stateless design enabling true horizontal scaling behind the ALB</li>
+            <li>AWS: EC2, RDS (private subnet), S3, VPC, Auto Scaling Group, ALB, Cloudflare Full Strict SSL</li>
         </ul>
     </div>
 
     <div class="section">
         <h2>Technology Stack</h2>
         <ul class="tech-list">
-            <li>Django (Class-Based Views, Signals, Authentication)</li>
-            <li>PostgreSQL (relational database via Django ORM, AWS RDS)</li>
-            <li>Redis (caching and message broker)</li>
-            <li>Celery (asynchronous task processing)</li>
-            <li>Stripe API (Checkout Sessions & Webhooks)</li>
-            <li>LLM APIs for AI-powered content summarization</li>
-            <li>AWS EC2 (application hosting)</li>
-            <li>AWS S3 (media and static asset storage)</li>
-            <li>Cloudflare (DNS, CDN, SSL, DDoS protection)</li>
-            <li>Nginx (reverse proxy and static file handling)</li>
-            <li>Gunicorn (production WSGI server)</li>
+            <li>Django 5.2 (Class-Based Views, Signals, ORM, Authentication)</li>
+            <li>PostgreSQL (AWS RDS, private subnet) · SQLite (development)</li>
+            <li>Redis — Django cache (DB0) + Celery broker (DB1) + distributed locking</li>
+            <li>Celery 5.5 — async task queue with exponential backoff and Beat scheduler</li>
+            <li>Stripe API — Checkout Sessions, HMAC-verified webhooks, idempotent event handling</li>
+            <li>LLM APIs — AI-powered post summarization with cache-aside retrieval</li>
+            <li>AWS EC2, S3, RDS, VPC, ASG, ALB</li>
+            <li>Nginx (reverse proxy, Unix socket) · Gunicorn (WSGI server) · systemd</li>
+            <li>Cloudflare Full (Strict) SSL — HTTPS enforced end to end</li>
+            <li>Pillow — async profile image resizing via Celery</li>
         </ul>
     </div>
 
     <div class="contact-info">
         <h3>Get In Touch</h3>
         <p>
-            I'm always interested in connecting with fellow developers and tech enthusiasts. 
-            Feel free to reach out if you have questions about the project or just want to chat!
+            Always happy to connect with fellow engineers — whether it's about this project,
+            backend systems, or just a good engineering problem.
         </p>
         <p><strong>Email:</strong> 801.mirfan@gmail.com</p>
 
         <div class="social-links">
             <a href="https://github.com/MIrfanGH/Django_Blog.git" target="_blank">GitHub →</a>
-
         </div>
     </div>
 </div>
