@@ -11,46 +11,24 @@ logger = logging.getLogger(__name__)
 
 def invalidate_post_cache(post):
     """
-    Remove all cached data related to a Post object.
+    Clears all cached data for a post on create, update, or delete.
 
-    Why this function exists:
-    --------------------------
-    - Whenever a post is created, updated, or deleted,
-      the cached copies become outdated (stale).
-    - We clear all cache entries where this post is shown.
-
-    What gets cleared:
-    ------------------
-    1. Global post list (homepage)
-    2. Author's personal post list
-    3. Post detail page 
-    4. Django cache_page() generated key for detail view
-       (Django uses its own key format internally)
+    Clears:
+    - Homepage post list
+    - Author's personal post list
+    - Post detail page — cache_page generates internal hashed keys that
+        can't be reconstructed manually, so we use delete_pattern()
+        (available because we're using django-redis as our cache backend)
     """
-
-    # Extract reusable info
     username = post.author.username
     pk = post.pk
 
-    # List of cache keys we want to delete
-    keys = [
-        "post_list_view",                         # Cached homepage list
-        f"user_posts_{username}",                 # Cached posts by that specific user
-        f"post_detail_{pk}",                      # Cached detail page
-        f"post_detail.views.decorators.cache.cache_page..{pk}.",  
-        # ^ Django's internal cache_page key format
-    ]
+    cache.delete("post_list_view")
+    cache.delete(f"user_posts_{username}")
+    cache.delete_pattern(f"*post_detail*{pk}*")
 
-    # Delete keys that exist → cache.delete returns True/False
-    removed = [key for key in keys if cache.delete(key)]
-
-    # Log which keys were actually deleted (useful in debugging)
-    logger.info(
-        "Cache invalidated for Post(id=%s, author=%s): %s",
-        pk,
-        username,
-        removed or "none",   # Shows "none" if no keys existed
-    )
+    logger.info("Cache invalidated for Post(id=%s, author=%s)", pk, username)
+    
  
 
 @receiver(post_save, sender=Post)

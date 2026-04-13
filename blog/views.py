@@ -27,9 +27,9 @@ from .tasks import (
     post_notifying_email, 
     post_update_notifying_email,
     notify_post_deletion,
-
 )
 
+from summarizer.services import get_post_summary
 import logging
 logger = logging.getLogger(__name__)
 
@@ -95,15 +95,20 @@ class PostListView(ListView):
         """
         context = super().get_context_data(**kwargs)
         
-        show_summary_id = self.request.GET.get('show_summary')
+        show_summary_id = self.request.GET.get('show_summary') # Get the post ID from query parameter (e.g., ?show_summary=5) 
         if not show_summary_id:
+            context['ai_summary'] = None 
+            return context # No summary requested, return context without AI summary
+        
+        post = Post.objects.filter(id=show_summary_id).first() 
+        if not post:
             context['ai_summary'] = None
+            logger.warning(f"Post with ID {show_summary_id}")
             return context
         
-        cache_key = f"post_summary_{show_summary_id}"
-        summary_text = cache.get(cache_key)
+        summary_text = get_post_summary(post)
         
-        if summary_text:
+        if summary_text: 
             context['ai_summary'] = {
                 'post_id': int(show_summary_id),
                 'summary': summary_text
