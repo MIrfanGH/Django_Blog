@@ -34,8 +34,11 @@ A Mini-SaaS blog platform built from scratch — not a tutorial clone. Features 
 ## ✨ Key Features
 
 - 🔐 **RBAC** — Reader / Author / Admin roles enforced via custom Django mixins
-- 💳 **Stripe Donations** — server-side checkout session, HMAC-verified webhooks, `pending → succeeded` state machine
-- 🤖 **AI Summarization** — one-click Groq LLM summary, Redis-cached 1 hour, original content untouched
+
+- 💳 **Stripe Donations** — server-side checkout session, HMAC-verified webhooks, two-layer idempotency (event-level + business-level), explicit failure handling
+
+- 🤖 **AI Summarization** — async Groq LLM summary (Celery task), cache-aside with DB fallback, stampede protection via        distributed locking, content-hash freshness detection
+
 - ⚙️ **Async Emails** — Celery handles all notifications (registration, post events, donations, periodic re-engagement); `transaction.on_commit()` used throughout to prevent orphan tasks
 - ⚡ **Redis Caching** — post list, per-user feeds, and detail pages cached with signal-driven invalidation on every create/update/delete
 - ☁️ **Stateless Design** — sessions, media, AI summaries, and SSL certs all live off-instance, enabling true horizontal scaling behind the ALB

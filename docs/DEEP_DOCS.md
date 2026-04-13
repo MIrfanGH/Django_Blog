@@ -333,6 +333,7 @@ payments   send_donation_appreciation_     Stripe webhook confirmed
 ---
 
 ### 6. Stripe Payment & Webhook Flow
+The payment system went through a deliberate reliability pass after the initial working implementation. The original code handled the happy path well but was vulnerable to duplicate webhook delivery, missing failure handling, and blind trust of Stripe event types. The current implementation adds two layers of idempotency and explicit failure awareness.
 
 ```
 User visits /payments/
@@ -364,67 +365,147 @@ SIMULTANEOUSLY (server-to-server from Stripe):
          POST /payments/webhooks/stripe/
               │
               ▼
-         1. stripe.Webhook.construct_event()
-            verifies HMAC signature → rejects if invalid
-              │
-              ▼ on checkout.session.completed
-         2. Donation.objects.get(id=donation_id)
-            .status = 'succeeded'
-            .donor_name / .donor_email ← from Stripe session
-            .save()
+         ── LAYER 0: Signature verification ──────────────────────
+         stripe.Webhook.construct_event()
+         Verifies HMAC signature → rejects (400) if invalid
+         Any unverified request is rejected before DB is touched
               │
               ▼
-         3. send_donation_appreciation_email.delay()
+         ── LAYER 1: Event-level idempotency ─────────────────────
+         try:
+             ProcessedEvent.objects.create(event_id=event['id'])
+         except IntegrityError:
+             return HttpResponse(status=200)   # already handled
+
+         Stripe retries the same webhook on network failures.
+         The unique constraint on event_id means each Stripe event
+         is processed exactly once, regardless of delivery count.
               │
               ▼
-         4. return HTTP 200 (always — prevents Stripe retries)
+         ── on checkout.session.completed ────────────────────────
+         Explicit payment_status check:
+             if session.get('payment_status') != 'paid':
+                 return HttpResponse(status=200)
+         checkout.session.completed does not guarantee payment.
+         This guard prevents marking a donation as succeeded
+         before funds are actually confirmed.
+              │
+              ▼
+         ── LAYER 2: Business-level idempotency ──────────────────
+         donation = Donation.objects.get(id=donation_id)
+         if donation.status == 'succeeded':
+             return HttpResponse(status=200)   # already processed
+
+         Protects against any edge case that bypasses Layer 1.
+              │
+              ▼
+         donation.status = 'succeeded'
+         donation.donor_name / donor_email ← from Stripe session
+         donation.save()
+              │
+              ▼
+         send_donation_appreciation_email.delay()
+              │
+              ▼
+         return HTTP 200 (always — prevents Stripe retries)
+
+         ── on payment_intent.payment_failed ─────────────────────
+         donation.status = 'failed'
+         donation.save()
+         (pending = abandoned or incomplete; failed = explicit failure)
+
+Key design decisions:
+
+Two-layer idempotency instead of one — event-level deduplication catches Stripe retries; business-level guards catch any edge case that slips through. Either layer alone is incomplete.
+Stateless webhook handler — each event is processed as independent. No shared variables, no assumed prior state. Everything needed is fetched fresh from the current event payload.
+Explicit payment validation — checkout.session.completed signals that the checkout flow completed, not that payment succeeded. payment_status == 'paid' is verified explicitly.
+Failure events handled — payment_intent.payment_failed sets status='failed'. Without this, failed payments remain pending forever and become invisible in reporting.
 ```
 
 ---
 
 ### 7. AI Summarization Flow
-
-Summaries were originally stored in **Django sessions**, then migrated to **Redis cache**. The reason for the migration was statelessness for Auto Scaling — sessions tied to a specific instance would be invisible to other EC2s behind the ALB. Redis is shared infrastructure that all instances read from equally.
+The summarization system was rebuilt from a simple synchronous view into a layered async pipeline after identifying three production failure modes in the original: request thread blocking, no persistence beyond Redis TTL, and unprotected concurrent stampedes. Eight changes were made. The result follows one principle: generate once, serve many times, regenerate only when the content actually changes.
 
 ```
 User clicks "Summarize" on a post
-        │ POST /summarize/<post_id>/
+        │ GET /summarize/<post_id>/
         ▼
-┌──────────────────────────────────┐
-│  summarize_post() view           │
-│                                  │
-│  cache_key = "post_summary_<id>" │
-│  summary = cache.get(cache_key)  │
-│                                  │
-│  CACHE HIT? ──────────────────────────────────┐
-│  CACHE MISS ↓                    │             │
-└──────────┬───────────────────────┘             │
-           ▼                                     │
-┌──────────────────────────────────┐             │
-│  generate_blog_summary(content)  │             │
-│  · Groq client, Llama 3.3 70B   │             │
-│  · temperature = 0.3 (factual)  │             │
-│  · ~1–2s response time          │             │
-└──────────┬───────────────────────┘             │
-           ▼                                     │
-  cache.set(cache_key, summary, 3600) ◄──────────┘
-           │
-           ▼
-  redirect(referer + ?show_summary=<id>)
-           │
-           ▼
-  PostListView.get_context_data()
-  reads ?show_summary param → fetches from Redis
-  → renders inline below the post
-    (original content never modified)
+┌───────────────────────────────────────────────┐
+│  get_post_summary(post) — service layer       │
+│                                               │
+│  current_hash = SHA-256(post.content)         │
+│  cache_key  = "summary:<id>:<hash>"           │
+│  lock_key   = "summary_lock:<id>:<hash>"      │
+└──────────────┬────────────────────────────────┘
+               │
+               ▼
+       ┌───────────────┐
+       │  Redis check  │── HIT ──► return summary immediately
+       └───────┬───────┘
+               │ MISS
+               ▼
+       ┌───────────────────────────────────────┐
+       │  DB check                             │
+       │  PostSummary.objects.filter(post=post)│
+       │  Does content_hash match?             │
+       └───────┬───────────────────────────────┘
+               │ MATCH → backfill Redis, return
+               │ MISMATCH or missing ↓
+               ▼
+       ┌───────────────────────────────────────┐
+       │  Lock check                           │
+       │  if not cache.get(lock_key):          │
+       │      cache.set(lock_key, True, 60s)   │
+       │      generate_post_summary_task.delay │
+       └───────┬───────────────────────────────┘
+               │
+               ▼
+       return None  ← view shows "generating..." message
+       (user refreshes; by then Celery has written to DB + cache)
 
-Why Redis, not sessions?
-  Sessions are instance-local without a shared session backend.
-  Behind an ALB with multiple EC2s, user A's summary on EC2 #1
-  is invisible when the next request hits EC2 #2.
-  Redis is shared across all instances → every EC2 reads
-  the same cache → stateless and ASG-compatible.
+─────────────────────────────────────────────────────────────
+BACKGROUND: generate_post_summary_task (Celery)
+─────────────────────────────────────────────────────────────
+        │
+        ▼
+┌───────────────────────────────────────────────┐
+│  generate_post_summary(content)               │
+│  · Groq client, Llama 3.3 70B                │
+│  · temperature=0.3 (factual, low randomness) │
+│  · timeout=10s hard cap on API call          │
+└──────────────┬────────────────────────────────┘
+               │ success
+               ▼
+  PostSummary.objects.update_or_create(
+      post_id=post_id,
+      defaults={
+          summary, content_hash,
+          generation_time_ms, generation_model
+      }
+  )   ← idempotent write; safe to retry
+
+  cache.set(cache_key, summary, 3600)
+  cache.delete(lock_key)          ← release immediately on success
+               │
+               │ on failure
+               ▼
+  raise self.retry(
+      exc=e,
+      countdown=2 ** self.request.retries * 5   # 5s → 10s → 20s
+  )
+  finally:
+      if self.request.retries >= self.max_retries:
+          cache.delete(lock_key)  ← always release on final failure
+                                    (prevents 60s stale lock blocking
+                                     all retries after a worker crash)
+─────────────────────────────────────────────────────────────
 ```
+Content-addressable invalidation :
+— the hash is what makes "regenerate only when content changes" precise. No manual flags, no timestamp comparison, no TTL guessing. If the content hasn't changed, the hash hasn't changed, and the cached summary is still valid.
+Why update_or_create for DB writes — the Celery task can be retried up to 3 times. update_or_create makes the DB write idempotent: running it twice for the same post_id updates in place rather than creating duplicates.
+Why lock release in finally, not just on success — a worker crash between task execution and lock expiry leaves the lock alive for up to 60 seconds. During that window, all concurrent requests silently skip generation and return None. The finally block guarantees the lock is always released — either immediately on success, or on the final retry failure.
+
 
 ---
 
@@ -456,6 +537,7 @@ Cache Invalidation:
   Called by @receiver(post_save) and @receiver(post_delete)
   Deletes: post_list_view, user_posts_<username>, post_detail_<pk>
   Result: next request hits DB, repopulates cache — no stale data served
+
 ```
 
 ---
@@ -513,17 +595,24 @@ Cache Invalidation:
 
 ### AI Summarization
 
-- One-click LLM summary per post (Groq Llama 3.3 70B, temperature 0.3)
-- Redis-cached 1 hour — repeated clicks hit cache, not the API
-- Displayed inline below the post via `?show_summary=<id>` redirect param
-- Original content is never modified
+-AI Summarization — one-click Groq LLM summary per post; original content never modified
+⚡ Non-blocking pipeline — LLM call runs in a background Celery task; view returns immediately
+🗄️ Cache-aside with DB fallback — Redis is the hot path, PostgreSQL is the source of truth; summaries survive cache restarts and evictions
+🔒 Stampede protection — distributed Redis lock ensures a single Groq call per unique content hash, regardless of concurrent requests
+🔁 Content-addressable freshness — SHA-256 hash of post content stored alongside every summary; hash mismatch triggers automatic regeneration, no manual flags needed
+📉 Retry with exponential backoff — 3 retries at 5s / 10s / 20s; lock released in finally block so a worker crash never silently blocks future attempts
+⏱️ Hard timeout — 10s cap on the LLM call prevents Celery workers hanging indefinitely
+🚦 Per-user rate limiting — 5 requests per 60s (keyed by user ID or IP for anonymous users) to protect API quota
 
 ### Stripe Donations
 
-- Server-side Checkout session creation (no card data touches the backend)
-- `Donation` record created with `status='pending'` before payment — abandoned checkouts are tracked
-- Webhook endpoint verifies HMAC signature before any DB writes
-- On `checkout.session.completed`: status → `succeeded`, donor info populated, thank-you email queued
+💳 Stripe Donations — server-side checkout session creation; no card data touches the backend
+🛡️ HMAC-verified webhooks — stripe.Webhook.construct_event() signature check before any DB write
+🔂 Two-layer idempotency — event-level deduplication via ProcessedEvent (unique constraint on Stripe event ID catches duplicate deliveries at DB layer); business-level guard (if donation.status == 'succeeded': return 200) prevents reprocessing even if the first layer is bypassed
+✅ Explicit payment validation — payment_status == 'paid' verified before marking success; checkout.session.completed alone is not trusted blindly
+❌ Failure handling — payment_intent.payment_failed events handled explicitly; failed status is set in DB rather than leaving donations permanently pending
+📬 State machine — Donation record created as pending on checkout creation; transitions to succeeded or failed based on webhook events only
+🔄 Stateless webhook handler — each event is treated as independent; no shared variables, no assumed prior state, all data fetched fresh from the current event payload
 - Test mode active (card `4242 4242 4242 4242`)
 
 ### Periodic Tasks (Celery Beat)
