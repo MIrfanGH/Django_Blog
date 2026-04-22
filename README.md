@@ -2,15 +2,18 @@
 
 # MyDailyBlog
 
-**Production-grade Django blogging platform — built and deployed independently end-to-end.**
+**Production-grade Django backend system — built and deployed independently end-to-end.**
 
----
+> ⚠️ Live site temporarily unavailable (AWS billing issue) — full architecture, code, and system design available below.
+
+**GitHub:** https://github.com/MIrfanGH/Django_Blog
+
 
 ## 🚀 What This Is
 
-A Mini-SaaS blog platform built from scratch — not a tutorial clone. Features Stripe donations, LLM-powered post summarization, async email pipelines, Redis caching, RBAC, and a full AWS production deployment with Auto Scaling.
+A Mini-SaaS blogging platform designed and built with production-oriented backend principles.
+It integrates LLM-powered summarization, async processing, caching strategies, and a full AWS deployment pipeline with Auto Scaling.
 
-**Live:** https://mydailyblog.me · **GitHub:** https://github.com/MIrfanGH/Django_Blog
 
 ---
 
@@ -31,13 +34,28 @@ A Mini-SaaS blog platform built from scratch — not a tutorial clone. Features 
 
 ---
 
+## 🔧 Production Problems Addressed
+
+| Problem                               | Engineering Approach                                     |
+| ------------------------------------  | -------------------------------------------------------- |
+| Duplicate payment processing          | Two-layer idempotent webhook handling (event + business) |
+| Unreliable external APIs (LLM/Stripe) | Celery retries with exponential backoff                  |
+| Cache stampede under load             | Redis-based distributed locking                          |
+| Stale cache after edits               | Content-hash based invalidation                          |
+| LLM cost abuse                        | Per-user rate limiting                                   |
+| Hanging API calls                     | Hard timeout on external requests                        |
+| Scaling bottlenecks                   | Stateless architecture (Auto Scaling ready)              |
+
+---
+
+
 ## ✨ Key Features
 
 - 🔐 **RBAC** — Reader / Author / Admin roles enforced via custom Django mixins
 
 - 💳 **Stripe Donations** — server-side checkout session, HMAC-verified webhooks, two-layer idempotency (event-level + business-level), explicit failure handling
 
-- 🤖 **AI Summarization** — async Groq LLM summary (Celery task), cache-aside with DB fallback, stampede protection via        distributed locking, content-hash freshness detection
+- 🤖 **AI Summarization** — async Groq LLM summary (Celery task), cache-aside with DB fallback, stampede protection via distributed locking, content-hash freshness detection
 
 - ⚙️ **Async Emails** — Celery handles all notifications (registration, post events, donations, periodic re-engagement); `transaction.on_commit()` used throughout to prevent orphan tasks
 - ⚡ **Redis Caching** — post list, per-user feeds, and detail pages cached with signal-driven invalidation on every create/update/delete
