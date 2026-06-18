@@ -14,8 +14,24 @@
 A Mini-SaaS blogging platform designed and built with production-oriented backend principles.
 It integrates LLM-powered summarization, async processing, caching strategies, and a full AWS deployment pipeline with Auto Scaling.
 
+---
+
+## 📸 Screenshots
+
+| Home Feed | AI Summarization |
+| --- | --- |
+| ![Home feed](screenshots/home.png) | ![AI summary](screenshots/ai-summary.png) |
+
+| Stripe Checkout | Celery Task Results (async pipeline) |
+| --- | --- |
+| ![Stripe checkout](screenshots/stripe-checkout.png) | ![Celery results all SUCCESS](screenshots/admin-panel.png) |
+
+| User Profile + RBAC | Login |
+| --- | --- |
+| ![Profile showing Author role](screenshots/user-profile.png) | ![Login page](screenshots/login.png) |
 
 ---
+
 
 ## 🛠️ Tech Stack
 
